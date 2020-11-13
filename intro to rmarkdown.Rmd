@@ -87,3 +87,7 @@ plot(bg_chem$NO3, bg_chem$NO3)
 ```{r}
 lm(bg_chem$CTD_Depth ~ bg_chem$CTD_Temperature)
 ```
+
+```{r}
+plot(bg_chem$CTD_Depth,bg_chem$CTD_Temperature)
+```
