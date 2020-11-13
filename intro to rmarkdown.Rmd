@@ -1,0 +1,85 @@
+---
+title: "Counihan_rmarkdown_example"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+Bus stop, wet day, she's there, I say, please share my umbrella
+
+## header two
+
+**Bus stop, bus goes, she stays, love grows, under my umbrella**
+
+*italics*
+
+1.yes
+2.No
+3.Maybe
+$/
+
+create r chunk
+```{r}```
+
+#are short cuts to creating r chunks
+command option i
+cntrl alt i
+
+
+```{r}
+x<-c(1:10)
+x
+```
+ 
+$\sum (n-1)$
+
+```{r}
+library(readr)
+```
+
+## **Introduction**
+
+- read in data
+
+```{r chunk1, message=FALSE}
+bg_chem <- read.csv("BGchem2008data.csv")
+```
+
+These data came from [Tweedie, 2009](https://doi.org/10.18739/A25T3FZ8X)
+
+## **Analysis**
+
+- calculate summary statistics
+- calculate mean Redfield ratio
+- plot Redfield ratio
+
+I am doing the following analyses as an example
+
+```{r}
+nitrate <- mean(bg_chem$NO3)
+nitrite <- mean(bg_chem$NO2)
+amm <- mean(bg_chem$NH4)
+phos <- mean (bg_chem$P) 
+```
+
+Here is the redfield analyses
+
+```{r}
+ratio <- (nitrate+nitrite+amm)/phos
+```
+
+we calculated the redfield ration to be `r round (ratio)`
+
+- plot redfile ratio
+
+```{r}
+plot(bg_chem$P, bg_chem$NO3+bg_chem$NO2+bg_chem$NH4)
+```
+
+```{r}
+plot(bg_chem$NO3, bg_chem$NO3)
+```
