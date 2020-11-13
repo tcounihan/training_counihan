@@ -80,6 +80,7 @@ we calculated the redfield ration to be `r round (ratio)`
 plot(bg_chem$P, bg_chem$NO3+bg_chem$NO2+bg_chem$NH4)
 ```
 
+
 ```{r}
 plot(bg_chem$NO3, bg_chem$NO3)
 ```
