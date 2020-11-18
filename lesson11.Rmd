@@ -1,0 +1,130 @@
+---
+title: "lesson11"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+library(rvest)
+library(readr)
+library(dplyr)
+library(janitor)
+```
+
+#web scraping
+
+```{r}
+webpage <- read_html("https://www.pwrc.usgs.gov/bbl/manual/speclist.cfm")
+
+tbls <- html_nodes(webpage, "table") %>% 
+  html_table(fill = TRUE)
+
+species <- tbls[[1]] %>% 
+  clean_names() %>% 
+  select(alpha_code, common_name) %>% 
+  mutate(alpha_code = tolower(alpha_code)) 
+```
+
+# load data
+```{r}
+nest_data <- read.csv ("https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3A982bd2fc-4edf-4da7-96ef-0d11b853102d")
+head(nest_data)
+
+predation_data <- read.csv("https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3A9ffec04c-7e2d-41dd-9e88-b6c2e8c4375e")
+head(predator_data)
+```
+
+# do some joins
+
+```{r}
+predator_species_join <- left_join(predator_data,species,by = c("species"="alpha_code")) %>% select(year, species, count)
+ 
+nest_species_join <- left_join(nest_data, species, by = c("species"="alpha_code")) %>% select(common_name, year)
+```
+
+## make a function note checking functions if (!("alpha_code" %in% names(species)) | ~ if alpha_code = names(species) is true then its false
+#      !("species" %in% names(df)) |
+# !("common_name" %in% names(species))){
+# stop("Tables appear to be formatted incorrectly.")
+
+
+#' Function to rename spp code to common names
+#'
+#' @param df 
+#' @param species 
+#'
+#' @return common names
+#' @export
+#'
+#' @examples
+#' 
+```{r}
+assign_species_name <- function(df, species){
+  if (!("alpha_code" %in% names(species)) |
+      !("species" %in% names(df)) |
+      !("common_name" %in% names(species))){
+    stop("Tables appear to be formatted incorrectly.")
+  }  
+  
+  
+  return_df <- left_join(df, species, by = c("species" = "alpha_code"))
+  
+  if (nrow(return_df) > nrow(df)){
+    warning("Joined table has more rows than original table. Check species table for duplicated code values.")
+  }
+  
+  pred_sum <- assign_species_name(df=predation_data, species)  
+  
+  
+  
+  
+  
+  if (length(which(is.na(return_df$common_name))) > 0){
+    x <- length(which(is.na(return_df$common_name)))
+    warning(paste("Common name has", x, "rows containing NA"))
+  }
+  
+  return(return_df)
+  
+}
+```
+
+# or you could just use but lose checking capability.. note left_join 
+
+```{r}
+assign_species_name <- function(df, species){
+    return_df <- left_join(df, species, by = c("species" = "alpha_code"))
+    return(return_df)
+}
+```
+
+
+
+
+
+
+
+  
