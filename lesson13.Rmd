@@ -7,7 +7,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r, message = f}
+```{r, message = FALSE}
 library(sf)
 library(dplyr)
 library(ggplot2)
@@ -68,13 +68,9 @@ pop_4326 <- st_as_sf(pop,
 
 head(pop_4326)
 ```
+ 
+#spatial join but need to transform pop_4326 to pop_3338
 
-#spatial join
-
-```{r}
-pop_joined <- st_join(pop_4326, ak_regions_3338, join = st_within)
-```
-# erroris due to the fact that the data are in different coordinate systems, so transform
 ```{r}
 pop_3338 <- st_transform(pop_4326, crs = 3338)
 
@@ -165,6 +161,20 @@ ak_map_3857 <- ggmap_bbox_to_3857(ak_map)
 ggmap(ak_map_3857) + 
   geom_sf(data = pop_3857, aes(color = population), inherit.aes = F) +
   scale_color_continuous(low = "khaki", high =  "firebrick", labels = comma)
+```
+
+
+# binned versus continuous
+
+```{r}
+ ggplot() +
+  geom_sf(data = pop_region_3338, aes(fill = total_pop)) +
+  geom_sf(data = rivers_3338, aes(size = StrOrder), color = "black") +
+  geom_sf(data = pop_3338, aes(), size = .5) +
+  scale_size(range = c(0.01, 0.2), guide = F) +
+  theme_bw() +
+  labs(fill = "Total Population") +
+  scale_fill_binned(low = "khaki", high = "firebrick", labels = comma)
 ```
 
 
